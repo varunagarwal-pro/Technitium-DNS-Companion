@@ -2,11 +2,16 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import {
   faBalanceScale,
   faBook,
+  faChartLine,
   faExternalLinkAlt,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLatestRelease } from "../../hooks/useLatestRelease";
+import {
+  describeBuildChannel,
+  formatBuildChannelStatus,
+} from "../../utils/build-channel";
 import "./AboutModal.css";
 
 interface AboutModalProps {
@@ -15,6 +20,10 @@ interface AboutModalProps {
 }
 
 export function AboutModal({ isOpen, onClose }: AboutModalProps) {
+  const buildRevision =
+    __BUILD_REVISION__ === "development" || __BUILD_REVISION__ === "unknown" ?
+      null
+    : __BUILD_REVISION__.slice(0, 7);
   const {
     latestVersion,
     latestReleaseUrl,
@@ -22,6 +31,12 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
     isUpdateAvailable,
     error: versionCheckError,
   } = useLatestRelease(__APP_VERSION__);
+  const buildChannel = describeBuildChannel(__BUILD_CHANNEL__);
+  const buildChannelStatus = formatBuildChannelStatus(
+    buildChannel,
+    latestVersion,
+    Boolean(versionCheckError),
+  );
 
   if (!isOpen) return null;
 
@@ -67,9 +82,28 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
           </h2>
           <div className="about-modal__version-row">
             <span className="about-modal__version">v{__APP_VERSION__}</span>
+            {buildChannel.badge && (
+              <span
+                className={`about-modal__channel about-modal__channel--${buildChannel.kind}`}
+              >
+                {buildChannel.badge}
+              </span>
+            )}
+            {buildRevision && (
+              <span
+                className="about-modal__revision"
+                title={`Build revision ${__BUILD_REVISION__}`}
+              >
+                {buildRevision}
+              </span>
+            )}
           </div>
           <div className="about-modal__version-check">
-            {isUpdateAvailable && latestVersion ?
+            {buildChannelStatus ?
+              <span className="about-modal__version-status about-modal__version-status--preview">
+                {buildChannelStatus}
+              </span>
+            : isUpdateAvailable && latestVersion ?
               <a
                 href={
                   latestReleaseUrl ||
@@ -109,6 +143,19 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
           >
             <FontAwesomeIcon icon={faGithub} />
             <span>GitHub Repository</span>
+            <FontAwesomeIcon
+              icon={faExternalLinkAlt}
+              className="about-modal__link-external"
+            />
+          </a>
+          <a
+            href="https://fail-safe.github.io/Technitium-DNS-Companion/performance/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="about-modal__link"
+          >
+            <FontAwesomeIcon icon={faChartLine} />
+            <span>DNS Logs Performance</span>
             <FontAwesomeIcon
               icon={faExternalLinkAlt}
               className="about-modal__link-external"

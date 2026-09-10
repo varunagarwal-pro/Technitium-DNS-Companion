@@ -9,6 +9,22 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.11.1] - 2026-09-09
+
+### Security
+
+- Update `qs` to 6.16.0 to address array-limit bypass and attacker-controlled
+  `isBuffer` denial-of-service vulnerabilities.
+- Update `multer` to 2.3.0 to fix file descriptor leaks from aborted disk-backed
+  multipart uploads.
+- Update build and lint dependencies `browserslist` to 4.28.9 and
+  `@humanfs/node` to 0.16.8 to address unsafe custom statistics handling and
+  symlink-following file copies.
+- Update Nodemailer to 9.1.1 to address address parsing, recipient validation,
+  and content access-control vulnerabilities.
+- Update `js-yaml`, `brace-expansion`, `nanoid`, Sharp, and the Vitest toolchain
+  to patched versions identified by the release dependency audit.
+
 ### Documentation
 
 - Published a user-facing DNS Logs performance overview connecting the
